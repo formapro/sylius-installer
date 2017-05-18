@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  sylius_web:
+    image: 'formapro/nginx-php-fpm:latest-all-exts'
+    working_dir: '/sylius'
+    depends_on:
+      - mysql
+    volumes:
+      - './:/sylius:cached'
+    ports:
+      - "80:80"
+    environment:
+      - NGINX_WEB_ROOT=/sylius/web
+      - NGINX_PHP_FALLBACK=/app_dev.php
+      - NGINX_PHP_LOCATION=^/app_dev\.php(/|$$)
+      - SYLIUS_APP_DEV_PERMITTED=1
+    env_file: 'app/config/.env'
+
+  mysql:
+    image: mariadb:10
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=sylius_dev
+    ports:
+      - "3306:3306"
